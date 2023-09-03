@@ -1,96 +1,12 @@
-package org.example;
+package org.tama.marketskimmer;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Main {
-    public static class Order implements Comparable<Order>{
-        protected int platinum;
-        protected int modrank;
-        protected boolean wtb;
-        protected boolean online;
-        protected DateTime lastUpdated;
-
-        public Order(int p, int mr, boolean wtb, boolean online, DateTime lastUpdated) {
-            platinum = p;
-            modrank = mr;
-            this.wtb = wtb;
-            this.online = online;
-            this.lastUpdated = lastUpdated;
-        }
-
-        @Override
-        public String toString() {
-            return "\nplatinum: " + platinum
-                    + "\nrank: " + modrank
-                    + "\nwtb: " + wtb
-                    + "\nonline: " + online
-                    + "\nlastUpdate: " + lastUpdated;
-        }
-
-        @Override
-        public int compareTo(Order o) {
-            return this.platinum - o.platinum;
-        }
-    }
-
-    public static ArrayList<Order> getOrders(String mod) throws Exception {
-        //https://api.warframe.market/v1
-        URL url = new URL("https://api.warframe.market/v1/items/" + mod + "/orders");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.connect();
-
-        //Check if connect is made
-        int responseCode = conn.getResponseCode();
-
-        //200 ok
-        if (responseCode != 200)
-            throw new RuntimeException("HttpResponseCode: " + responseCode);
-        StringBuilder informationString = new StringBuilder();
-        Scanner scanner = new Scanner(url.openStream());
-
-        while (scanner.hasNext()) {
-            informationString.append(scanner.nextLine());
-        }
-        scanner.close();
-        conn.disconnect();
-
-        //turn the string into a json
-        JSONParser parse = new JSONParser();
-        JSONObject dataObject = (JSONObject) parse.parse(String.valueOf(informationString));
-        JSONArray arr = (JSONArray) ((JSONObject) dataObject.get("payload")).get("orders");
-        ArrayList<Order> orders = new ArrayList<>();
-        for (Object objectOrder :
-                arr) {
-            JSONObject jsonOrder = (JSONObject) objectOrder;
-            int p = ((Long) jsonOrder.get("platinum")).intValue();
-            int mr = ((Long) jsonOrder.get("mod_rank")).intValue();
-            boolean wtb = jsonOrder.get("order_type").toString().equals("buy");
-            boolean online = !((JSONObject) jsonOrder.get("user")).get("status").toString().equals("offline");
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            DateTime lastUpdated = formatter.parseDateTime(jsonOrder.get("last_update").toString());
-            Order order = new Order(p, mr, wtb, online, lastUpdated);
-            orders.add(order);
-        }
-        orders.sort(null);
-        System.out.println(orders);
-
-        return orders;
-    }
 
     public static void main(String[] args) throws Exception {
-        ArrayList<Order> orders = getOrders("primed_fulmination");
+        ArrayList<Order> orders = Market.getOrders("primed_fulmination");
         /*//https://api.warframe.market/v1
         try {
             URL url = new URL("https://api.warframe.market/v1/items/primed_fulmination/orders");
