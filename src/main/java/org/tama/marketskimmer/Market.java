@@ -57,4 +57,7 @@ public class Market {
 
         return orders;
     }
+    public static ArrayList<Order>[] splitOrders(ArrayList<Order> arr) {
+        return null;
+    }
 }

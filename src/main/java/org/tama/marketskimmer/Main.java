@@ -78,10 +78,6 @@ public class Main {
                     }
                 }
                 System.out.println(maxed);
-                *//*TODO  i seperated them into wts maxed and wtb unranked, take average of the 3 cheapest each and find the difference. Make a class for a mod with this code inside of it then
-                  TODO another method to pull information from a spread sheet to do this for each mod. Make a compare method for the mod class and then just collections.sort lol
-                  TODO then output that in a new spreadsheet?
-                *//*
             }
 
         } catch (Exception e) {
