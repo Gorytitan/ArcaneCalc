@@ -76,8 +76,8 @@ public class Market {
         }
         wtbOrders.sort(null);
         wtsOrders.sort(null);
-        System.out.println("WTB ORDERS -------------------\n" + wtbOrders);
-        System.out.println("WTS ORDERS -------------------\n" + wtsOrders);
+        /*System.out.println("WTB ORDERS -------------------\n" + wtbOrders);
+        System.out.println("WTS ORDERS -------------------\n" + wtsOrders);*/
         return wtsOrders.get(0).platinum - wtbOrders.get(wtbOrders.size()-1).platinum;
     }
 }
