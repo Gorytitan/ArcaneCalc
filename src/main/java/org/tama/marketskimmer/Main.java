@@ -6,7 +6,13 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+
+        ArrayList<Mod> maxableMods = WarframeCommunityApi.getR10Mods();
+
         ArrayList<Order> orders = Market.getOrders("primed_fulmination");
+        System.out.println(Market.getDifference(orders));
+
+
         /*//https://api.warframe.market/v1
         try {
             URL url = new URL("https://api.warframe.market/v1/items/primed_fulmination/orders");

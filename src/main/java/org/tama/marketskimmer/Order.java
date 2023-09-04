@@ -19,11 +19,13 @@ public class Order implements Comparable<Order> {
 
     @Override
     public String toString() {
-        return "\nplatinum: " + platinum
-                + "\nrank: " + modrank
-                + "\nwtb: " + wtb
-                + "\nonline: " + online
-                + "\nlastUpdate: " + lastUpdated;
+        return "Order{" +
+                "platinum=" + platinum +
+                ", modrank=" + modrank +
+                ", wtb=" + wtb +
+                ", online=" + online +
+                ", lastUpdated=" + lastUpdated +
+                '}';
     }
 
     @Override
