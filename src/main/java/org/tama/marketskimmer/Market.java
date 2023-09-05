@@ -6,7 +6,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -18,10 +17,12 @@ public class Market {
     public static ArrayList<Order> getOrders(String mod) throws Exception {
         //https://api.warframe.market/v1
         JSONObject dataObject = getOrderJsons(mod);
+        if (dataObject == null) {
+            return null;
+        }
         JSONArray arr = (JSONArray) ((JSONObject) dataObject.get("payload")).get("orders");
         ArrayList<Order> orders = new ArrayList<>();
-        for (Object objectOrder :
-                arr) {
+        for (Object objectOrder : arr) {
             JSONObject jsonOrder = (JSONObject) objectOrder;
             int p = ((Long) jsonOrder.get("platinum")).intValue();
             int mr = ((Long) jsonOrder.get("mod_rank")).intValue();
@@ -38,7 +39,7 @@ public class Market {
         return orders;
     }
 
-    private static JSONObject getOrderJsons(String mod) throws IOException, ParseException {
+    private static JSONObject getOrderJsons(String mod) throws IOException {
         URL url = new URL("https://api.warframe.market/v1/items/" + mod + "/orders");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -48,8 +49,7 @@ public class Market {
         int responseCode = conn.getResponseCode();
 
         //200 ok
-        if (responseCode != 200)
-            throw new RuntimeException("HttpResponseCode: " + responseCode);
+        if (responseCode != 200) throw new RuntimeException("HttpResponseCode: " + responseCode);
         StringBuilder informationString = new StringBuilder();
         Scanner scanner = new Scanner(url.openStream());
 
@@ -60,24 +60,28 @@ public class Market {
         conn.disconnect();
 
         //turn the string into a json
-        JSONParser parse = new JSONParser();
-        return (JSONObject) parse.parse(String.valueOf(informationString));
+        try {
+            JSONParser parse = new JSONParser();
+            return (JSONObject) parse.parse(String.valueOf(informationString));
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
     public static int getDifference(ArrayList<Order> arr) {
+        if (arr == null) return -1;
         ArrayList<Order> wtbOrders = new ArrayList<>();
         ArrayList<Order> wtsOrders = new ArrayList<>();
-        for (Order order :
-                arr) {
-            if (order.wtb && order.online && order.modrank == 0)
-                wtbOrders.add(order);
-            else if (!order.wtb && order.online && order.modrank == 10)
-                wtsOrders.add(order);
+        for (Order order : arr) {
+            if (order.wtb && order.online && order.modrank == 0) wtbOrders.add(order);
+            else if (!order.wtb && order.online && order.modrank == 10) wtsOrders.add(order);
         }
         wtbOrders.sort(null);
         wtsOrders.sort(null);
-        /*System.out.println("WTB ORDERS -------------------\n" + wtbOrders);
-        System.out.println("WTS ORDERS -------------------\n" + wtsOrders);*/
-        return wtsOrders.get(0).platinum - wtbOrders.get(wtbOrders.size()-1).platinum;
+        if (wtbOrders.isEmpty() || wtsOrders.isEmpty()) {
+            return -1;
+        }
+        return wtsOrders.get(0).platinum - wtbOrders.get(wtbOrders.size() - 1).platinum;
     }
 }

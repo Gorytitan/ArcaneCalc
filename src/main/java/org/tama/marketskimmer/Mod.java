@@ -2,8 +2,9 @@ package org.tama.marketskimmer;
 
 public class Mod {
     protected String urlName;
-    protected int endoCost;
     protected int maxRank;
+    protected double endoPlatRatio;
+    protected double endoCost;
 
     public Mod(String urlName, String rarity, int maxRank) throws Exception {
         this.urlName = urlName;
@@ -15,14 +16,15 @@ public class Mod {
             case "Legendary" -> endoCost = 40920;
             default -> throw new Exception(rarity);
         }
+        updateRatio();
+    }
+
+    public void updateRatio() throws Exception {
+        endoPlatRatio = Market.getDifference(Market.getOrders(urlName)) / endoCost * 10000;
     }
 
     @Override
     public String toString() {
-        return "Mod{" +
-                "urlName='" + urlName + '\'' +
-                ", endoCost=" + endoCost +
-                ", maxRank=" + maxRank +
-                '}';
+        return urlName + ", " + endoPlatRatio + "\n";
     }
 }
