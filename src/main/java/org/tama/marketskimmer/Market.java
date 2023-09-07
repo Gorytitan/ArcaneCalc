@@ -39,30 +39,12 @@ public class Market {
         return orders;
     }
 
-    private static JSONObject getOrderJsons(String mod) throws IOException {
-        URL url = new URL("https://api.warframe.market/v1/items/" + mod + "/orders");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.connect();
-
-        //Check if connect is made
-        int responseCode = conn.getResponseCode();
-
-        //200 ok
-        if (responseCode != 200) throw new RuntimeException("HttpResponseCode: " + responseCode);
-        StringBuilder informationString = new StringBuilder();
-        Scanner scanner = new Scanner(url.openStream());
-
-        while (scanner.hasNext()) {
-            informationString.append(scanner.nextLine());
-        }
-        scanner.close();
-        conn.disconnect();
-
+    private static JSONObject getOrderJsons(String mod) throws Exception {
+        StringBuilder jsonStringBuilder = ApiCaller.getJSON("https://api.warframe.market/v1/items/" + mod + "/orders");
         //turn the string into a json
         try {
             JSONParser parse = new JSONParser();
-            return (JSONObject) parse.parse(String.valueOf(informationString));
+            return (JSONObject) parse.parse(String.valueOf(jsonStringBuilder));
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -83,5 +65,13 @@ public class Market {
             return -1;
         }
         return wtsOrders.get(0).platinum - wtbOrders.get(wtbOrders.size() - 1).platinum;
+    }
+
+    public static JSONArray getStats(String modUrlName) throws Exception {
+        JSONObject wrapper = ApiCaller.getJsonObject("https://api.warframe.market/v1/items/" + modUrlName + "/statistics");
+        JSONObject payload = (JSONObject) wrapper.get("payload");
+        JSONObject statisticsClosed = (JSONObject) payload.get("statistics_closed");
+        JSONArray pastTwoDayStats = (JSONArray) statisticsClosed.get("48hours");
+        return pastTwoDayStats;
     }
 }
