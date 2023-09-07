@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class WarframeCommunityApi {
     public static List<Mod> getR10Mods() throws Exception {
-        JSONArray mods = getMods();
+        JSONArray mods = ApiCaller.getJsonArray("https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json");
         List<Mod> fusionLimitTenMods = new ArrayList<>();
         for (Object objectMod :
                 mods) {
@@ -34,26 +34,5 @@ public class WarframeCommunityApi {
             }
         }
         return fusionLimitTenMods;
-    }
-
-    private static JSONArray getMods() throws IOException, ParseException {
-        URL modUrl = new URL("https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json");
-        HttpsURLConnection connection = (HttpsURLConnection) modUrl.openConnection();
-        connection.setRequestMethod("GET");
-        connection.connect();
-        int requestCode = connection.getResponseCode();
-
-        if (requestCode != 200)
-            throw new RuntimeException("HTTP Response Code: " + requestCode);
-        StringBuilder informationString = new StringBuilder();
-        Scanner scanner = new Scanner(modUrl.openStream());
-
-        while (scanner.hasNext()) {
-            informationString.append(scanner.nextLine());
-        }
-        scanner.close();
-        connection.disconnect();
-        JSONParser parse = new JSONParser();
-        return (JSONArray) parse.parse(String.valueOf(informationString));
     }
 }
