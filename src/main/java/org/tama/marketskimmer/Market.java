@@ -7,11 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Market {
     public static ArrayList<Order> getOrders(String mod) throws Exception {
@@ -51,7 +47,7 @@ public class Market {
         }
     }
 
-    public static int getDifference(ArrayList<Order> arr) {
+    public static int getCurrentDifference(ArrayList<Order> arr) {
         if (arr == null) return -1;
         ArrayList<Order> wtbOrders = new ArrayList<>();
         ArrayList<Order> wtsOrders = new ArrayList<>();
@@ -73,5 +69,25 @@ public class Market {
         JSONObject statisticsClosed = (JSONObject) payload.get("statistics_closed");
         JSONArray pastTwoDayStats = (JSONArray) statisticsClosed.get("48hours");
         return pastTwoDayStats;
+    }
+    public static double[] getAverageDifference(String modUrlName) throws Exception{
+        JSONArray stats = getStats(modUrlName);
+        int sumMax = 0;
+        int sumUnranked = 0;
+        double volMax = 0;
+        double volUnranked = 0;
+        for (Object stat :
+                stats) {
+            JSONObject statJson = (JSONObject) stat;
+            if (((Long) statJson.get("mod_rank")).intValue() == 0){
+                sumUnranked += ((Long) statJson.get("wa_price")).intValue() * ((Long) statJson.get("volume")).intValue();
+                volUnranked += ((Long) statJson.get("volume")).intValue();
+            }
+            else {
+                sumMax += ((Long) statJson.get("wa_price")).intValue() * ((Long) statJson.get("volume")).intValue();
+                volMax += ((Long) statJson.get("volume")).intValue();
+            }
+        }
+        return new double[] {sumUnranked / volUnranked, sumMax / volMax};
     }
 }

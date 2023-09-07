@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
     /*TODO
     *   1. make modstats, which holds the difference between each thingy. Uses JSONArray as parameter
-    *   2. redo all apis with apicaller just to make speenah happy
+    *   2. redo all apis with apicaller just to make speenah happy DONE
     *   3. modstats needs to add all the averages * volume and then dived by total volume afterwards,
     *       probably iterate using enhanced for loop
     *   4. delete unnecessary code once done

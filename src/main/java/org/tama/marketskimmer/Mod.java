@@ -20,7 +20,7 @@ public class Mod {
     }
 
     public void updateRatio() throws Exception {
-        endoPlatRatio = Market.getDifference(Market.getOrders(urlName)) / endoCost * 10000;
+        //endoPlatRatio = Market.getCurrentDifference(Market.getOrders(urlName)) / endoCost * 10000;
     }
 
     @Override
