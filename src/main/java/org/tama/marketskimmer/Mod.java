@@ -2,13 +2,13 @@ package org.tama.marketskimmer;
 
 public class Mod {
     protected String urlName;
-    protected int maxRank;
-    protected double endoPlatRatio;
     protected double endoCost;
-
-    public Mod(String urlName, String rarity, int maxRank) throws Exception {
+    protected double endoPlatRatio;
+    protected double platPerMod;
+    protected int volume;
+    public Mod(String urlName, String rarity) throws Exception {
         this.urlName = urlName;
-        this.maxRank = maxRank;
+        System.out.println(urlName);
         switch (rarity) {
             case "Common" -> endoCost = 10230;
             case "Uncommon" -> endoCost = 20460;
@@ -20,7 +20,11 @@ public class Mod {
     }
 
     public void updateRatio() throws Exception {
-        //endoPlatRatio = Market.getCurrentDifference(Market.getOrders(urlName)) / endoCost * 10000;
+        double[] stats = Market.getStats(urlName);
+        endoPlatRatio = stats[0] / endoCost * 10000;
+        platPerMod = stats[0];
+        volume = (int) stats[1];
+
     }
 
     @Override
