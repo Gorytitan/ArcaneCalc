@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.util.List;
 
 public class Main {
-    //TODO do it by last week, instead of past 48 hours
+    //TODO add javadoc comments to everything because BORED
     public static void main(String[] args) throws Exception {
         run();
     }
