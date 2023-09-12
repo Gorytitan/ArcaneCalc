@@ -1,11 +1,12 @@
 package org.tama.marketskimmer;
 
 public class Mod {
-    protected String urlName;
-    protected double endoCost;
+    final protected String urlName;
+    final protected double endoCost;
     protected double endoPlatRatio;
     protected double platPerMod;
     protected int volume;
+
     public Mod(String urlName, String rarity) throws Exception {
         this.urlName = urlName;
         System.out.println(urlName);
@@ -20,7 +21,7 @@ public class Mod {
     }
 
     public void updateRatio() throws Exception {
-        double[] stats = Market.getStats(urlName);
+        double[] stats = Market.getModStats(urlName);
         endoPlatRatio = stats[0] / endoCost * 10000;
         platPerMod = stats[0];
         volume = (int) stats[1];
